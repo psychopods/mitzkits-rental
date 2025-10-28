@@ -1,22 +1,37 @@
-version: '3.8'
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:latest
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: conceptual2002
       POSTGRES_DB: library_kit_db
     ports:
-      - "5432:5432"
+      - "5431:5432"  # host:container
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/
 
   redis:
-    image: redis:7-alpine
+    image: redis:latest
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+
+  backend:
+    build: ./backend
+    container_name: rental-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - postgres
+      - redis
+    command: npm run dev
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./shared:/usr/src/shared
 
 volumes:
   postgres_data:

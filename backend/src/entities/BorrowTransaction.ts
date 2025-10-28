@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { TransactionStatus, KitCondition } from '../../../shared/src/types';
+import { TransactionStatus, KitCondition } from '../shared/src/types';
 import { StudentAccount } from './StudentAccount';
 import { Kit } from './Kit';
 

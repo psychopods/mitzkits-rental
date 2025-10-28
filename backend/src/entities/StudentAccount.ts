@@ -1,43 +1,43 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { BorrowTransaction } from './BorrowTransaction';
-import { AccountStatus, AccountFlag } from '../../../shared/src/types';
+import { AccountStatus, AccountFlag } from '../shared/src/types';
 
 @Entity('student_accounts')
 export class StudentAccount {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  studentId: string;
+  studentId!: string;
 
   @Column()
-  firstName: string;
+  firstName!: string;
 
   @Column()
-  lastName: string;
+  lastName!: string;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column({ nullable: true })
-  phone: string;
+  phone?: string;
 
   @Column({
     type: 'enum',
     enum: AccountStatus,
     default: AccountStatus.ACTIVE
   })
-  status: AccountStatus;
+  status!: AccountStatus;
 
   @Column('simple-array')
-  flags: AccountFlag[];
+  flags!: AccountFlag[];
 
   @OneToMany(() => BorrowTransaction, (transaction) => transaction.student)
-  transactions: BorrowTransaction[];
+  transactions!: BorrowTransaction[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

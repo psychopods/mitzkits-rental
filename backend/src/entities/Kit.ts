@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { KitStatus, KitCondition } from '../../../shared/src/types';
+import { KitStatus, KitCondition } from '../shared/src/types';
 import { KitComponent } from './KitComponent';
 
 @Entity('kits')
