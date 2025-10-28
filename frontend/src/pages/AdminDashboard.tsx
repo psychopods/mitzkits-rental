@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminService } from '../services/api';
-import { SystemConfig, NotificationConfig } from '../../../shared/src/types';
+import { SystemConfig, NotificationConfig } from '../shared/src/types';
 
 const AdminDashboard: React.FC = () => {
   const { data: config, isLoading: configLoading } = useQuery<SystemConfig>({

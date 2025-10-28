@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { kitService } from '../services/api';
-import { Kit, KitStatus, KitCondition } from '../../../shared/src/types';
+import { Kit } from '../shared/src/types'; //, KitStatus, KitCondition
 
 const KitList: React.FC = () => {
   const { data: kits, isLoading, error } = useQuery<Kit[]>({

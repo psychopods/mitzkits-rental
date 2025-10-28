@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { borrowService } from '../services/api';
-import { BorrowTransaction, TransactionStatus } from '../../../shared/src/types';
+import { BorrowTransaction} from '../shared/src/types'; //, TransactionStatus 
 
 const BorrowList: React.FC = () => {
   const { data: transactions, isLoading, error } = useQuery<BorrowTransaction[]>({

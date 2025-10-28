@@ -21,7 +21,7 @@ services:
     build: ./backend
     container_name: rental-backend
     ports:
-      - "3000:3000"
+      - "5219:5219"
     env_file:
       - ./backend/.env
     depends_on:

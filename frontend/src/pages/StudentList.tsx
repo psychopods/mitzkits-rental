@@ -1,7 +1,8 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { studentService } from '../services/api';
-import { StudentAccount, AccountStatus, AccountFlag } from '../../../shared/src/types';
+import { StudentAccount } from '../shared/src/types';
+// AccountStatus, AccountFlag
 
 const StudentList: React.FC = () => {
   const { data: students, isLoading, error } = useQuery<StudentAccount[]>({
