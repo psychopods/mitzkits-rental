@@ -6,9 +6,8 @@ const router = Router();
 const studentController = new StudentController();
 
 router.get('/', studentController.getAllStudents);
-router.get('/:id', studentController.getStudentById);
-router.post(
-  '/',
+router.get('/:studentId', studentController.getStudentById);
+router.post('/',
   [
     body('studentId').notEmpty().trim(),
     body('firstName').notEmpty().trim(),
@@ -18,16 +17,18 @@ router.post(
   studentController.createStudent
 );
 router.put(
-  '/:id',
+  '/:studentId',
   [
-    body('firstName').optional().trim(),
-    body('lastName').optional().trim(),
-    body('email').optional().isEmail().normalizeEmail(),
+    // Validation rules
+    body('firstName').optional().trim().notEmpty().withMessage('First name cannot be empty'),
+    body('lastName').optional().trim().notEmpty().withMessage('Last name cannot be empty'),
+    body('email').optional().isEmail().withMessage('Must be a valid email').normalizeEmail(),
   ],
   studentController.updateStudent
 );
+
 router.patch(
-  '/:id/status',
+  '/:studentId/status',
   [
     body('status').isIn(['ACTIVE', 'INACTIVE', 'FROZEN', 'DEACTIVATED']),
   ],
@@ -35,13 +36,13 @@ router.patch(
 );
 
 router.post(
-  '/:id/flags',
+  '/:studentId/flags',
   [
     body('flag').isIn(['MISCONDUCT', 'OVERDUE', 'DAMAGED_ITEMS', 'PAYMENT_DUE']),
   ],
   studentController.addStudentFlag
 );
 
-router.delete('/:id/flags/:flag', studentController.removeStudentFlag);
+router.delete('/:studentId/flags/:flag', studentController.removeStudentFlag);
 
 export { router as studentRouter };

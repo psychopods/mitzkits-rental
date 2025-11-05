@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { authMiddleware, authorize } from './middleware/authMiddleware';
 import { studentRouter } from './routes/student.routes';
 import { kitRouter } from './routes/kit.routes';
 import { borrowRouter } from './routes/borrow.routes';
 import { adminRouter } from './routes/admin.routes';
-import pool from './config/postgreSQL';
-import redis from './config/redisDB'; // connects automatically
+import { adminAuthRouter } from './routes/adminAuth.route';
+import './config/postgreSQL';
+import './config/redisDB'; // connects automatically
 
 dotenv.config();
 
@@ -19,10 +21,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routers
-app.use('/api/students', studentRouter);
-app.use('/api/kits', kitRouter);
-app.use('/api/borrow', borrowRouter);
-app.use('/api/admin', adminRouter);
+app.use('/api/students', authMiddleware, studentRouter);
+app.use('/api/kits', authMiddleware, kitRouter);
+app.use('/api/borrow', authMiddleware, borrowRouter);
+app.use('/api/admin', authMiddleware, authorize, adminRouter);
+app.use('/api/user', adminAuthRouter)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);

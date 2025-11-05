@@ -5,13 +5,8 @@ import { KitController } from '../controllers/kit.controller';
 const router = Router();
 const kitController = new KitController();
 
-// Get all kits
 router.get('/', kitController.getAllKits);
-
-// Get kit by ID
 router.get('/:id', kitController.getKitById);
-
-// Create kit
 router.post(
   '/',
   [
@@ -23,8 +18,6 @@ router.post(
   ],
   kitController.createKit
 );
-
-// Update kit
 router.put(
   '/:id',
   [
@@ -35,8 +28,6 @@ router.put(
   ],
   kitController.updateKit
 );
-
-// Update kit status
 router.patch(
   '/:id/status',
   [
@@ -44,8 +35,6 @@ router.patch(
   ],
   kitController.updateKitStatus
 );
-
-// Add component to kit
 router.post(
   '/:id/components',
   [
@@ -54,8 +43,6 @@ router.post(
   ],
   kitController.addComponent
 );
-
-// Update component
 router.put(
   '/:id/components/:componentId',
   [
@@ -66,8 +53,6 @@ router.put(
   ],
   kitController.updateComponent
 );
-
-// Remove component from kit
 router.delete('/:id/components/:componentId', kitController.removeComponent);
 
 export { router as kitRouter };
