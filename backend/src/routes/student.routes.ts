@@ -5,13 +5,8 @@ import { StudentController } from '../controllers/student.controller';
 const router = Router();
 const studentController = new StudentController();
 
-// Get all students
 router.get('/', studentController.getAllStudents);
-
-// Get student by ID
 router.get('/:id', studentController.getStudentById);
-
-// Create student
 router.post(
   '/',
   [
@@ -22,8 +17,6 @@ router.post(
   ],
   studentController.createStudent
 );
-
-// Update student
 router.put(
   '/:id',
   [
@@ -33,8 +26,6 @@ router.put(
   ],
   studentController.updateStudent
 );
-
-// Update student status
 router.patch(
   '/:id/status',
   [
@@ -43,7 +34,6 @@ router.patch(
   studentController.updateStudentStatus
 );
 
-// Add flag to student
 router.post(
   '/:id/flags',
   [
@@ -52,7 +42,6 @@ router.post(
   studentController.addStudentFlag
 );
 
-// Remove flag from student
 router.delete('/:id/flags/:flag', studentController.removeStudentFlag);
 
 export { router as studentRouter };

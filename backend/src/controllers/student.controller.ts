@@ -2,20 +2,20 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
 export class StudentController {
+
   async getAllStudents(req: Request, res: Response) {
     try {
-      // TODO: Implement fetching all students from database
-    interface Student {
-      id: string;
-      name: string;
-      email: string;
-      status: string;
-      flags: string[];
-      createdAt: Date;
-      updatedAt?: Date;
-    }
+      interface Student {
+        id: string;
+        name: string;
+        email: string;
+        status: string;
+        flags: string[];
+        createdAt: Date;
+        updatedAt?: Date;
+      }
 
-    const students: Student[] = [];
+      const students: Student[] = [];
       res.json(students);
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch students' });
