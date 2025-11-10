@@ -147,7 +147,7 @@ export class BorrowController {
       );
 
       await pool.query("COMMIT");
-      res.json(updatedTx.rows[0]);
+      res.json(updateTx.rows[0]);
     } catch (error) {
       await pool.query("ROLLBACK");
       console.error(error);
