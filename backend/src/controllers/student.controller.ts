@@ -4,6 +4,17 @@ import pool from '../config/postgreSQL';
 
 export class StudentController {
 
+  async countAllStudents(req:Request, res: Response){
+    try {
+      const result = await pool.query('SELECT COUNT (*) AS total_students FROM student_accounts')
+      const totalStudents = parseInt(result.rows[0].total_students, 10)
+      res.json({totalStudents})
+    } catch (err) {
+      console.error(err)
+      res.status(500).json({error: "Failed to count Students"})
+    }
+  }
+
   async getAllStudents(req: Request, res: Response) {
     try {
       const result = await pool.query('SELECT * FROM student_accounts');

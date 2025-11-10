@@ -4,9 +4,10 @@ import { Transaction } from '../models/types';
 import pool from '../config/postgreSQL';
 
 export class BorrowController {
+  
   async getAllTransactions(req: Request, res: Response) {
     try {
-      const result = await pool.query('SELECT * FROM transactions ORDER BY borrow_date DESC');
+      const result = await pool.query('SELECT * FROM borrow_transactions ORDER BY borrow_date DESC');
       const transactions: Transaction[] = result.rows;
       res.json(transactions);
     } catch (error) {
@@ -18,7 +19,7 @@ export class BorrowController {
   async getTransactionById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await pool.query('SELECT * FROM transactions WHERE id = $1', [id]);
+      const result = await pool.query('SELECT * FROM borrow_transactions WHERE id = $1', [id]);
       const transaction: Transaction | undefined = result.rows[0];
 
       if (!transaction) {
@@ -36,7 +37,7 @@ export class BorrowController {
     try {
       const { studentId } = req.params;
       const result = await pool.query(
-        'SELECT * FROM transactions WHERE student_id = $1 ORDER BY borrow_date DESC',
+        'SELECT * FROM borrow_transactions WHERE student_id = $1 ORDER BY borrow_date DESC',
         [studentId]
       );
       const transactions: Transaction[] = result.rows;
@@ -51,7 +52,7 @@ export class BorrowController {
     try {
       const { kitId } = req.params;
       const result = await pool.query(
-        'SELECT * FROM transactions WHERE kit_id = $1 ORDER BY borrow_date DESC',
+        'SELECT * FROM borrow_transactions WHERE kit_id = $1 ORDER BY borrow_date DESC',
         [kitId]
       );
       const transactions: Transaction[] = result.rows;
@@ -81,7 +82,7 @@ export class BorrowController {
 
       // Create transaction
       const transactionResult = await pool.query(
-        `INSERT INTO transactions (student_id, kit_id, borrow_date, due_date, status, initial_condition)
+        `INSERT INTO borrow_transactions (student_id, kit_id, borrow_date, due_date, status, initial_condition)
          VALUES ($1, NOW(), NOW() + INTERVAL '7 days', 'ACTIVE', $2, $3) RETURNING *`,
         [studentId, kitId, initialCondition]
       );
@@ -108,7 +109,7 @@ export class BorrowController {
     try {
       await pool.query('BEGIN');
 
-      const result = await pool.query('SELECT * FROM transactions WHERE id = $1', [id]);
+      const result = await pool.query('SELECT * FROM borrow_transactions WHERE id = $1', [id]);
       const transaction = result.rows[0];
 
       if (!transaction || transaction.status !== 'ACTIVE') {
@@ -121,7 +122,7 @@ export class BorrowController {
 
       // Update transaction
       const updateTx = await pool.query(
-        `UPDATE transactions
+        `UPDATE borrow_transactions
          SET return_date = NOW(), status = 'RETURNED', penalties = $1, notes = $2
          WHERE id = $3 RETURNING *`,
         [penalties, notes, id]
@@ -152,7 +153,7 @@ export class BorrowController {
 
     try {
       const result = await pool.query(
-        'UPDATE transactions SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+        'UPDATE borrow_transactions SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
         [status, id]
       );
 
