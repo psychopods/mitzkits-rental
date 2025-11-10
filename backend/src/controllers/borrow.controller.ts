@@ -84,9 +84,11 @@ export class BorrowController {
 
       // Create transaction
       const transactionResult = await pool.query(
-        `INSERT INTO borrow_transactions (student_id, kit_id, borrow_date, due_date, status, initial_condition)
-         VALUES ($1, NOW(), NOW() + INTERVAL '7 days', 'ACTIVE', $2, $3) RETURNING *`,
-        [studentId, kitId, initialCondition]
+        `INSERT INTO transactions 
+           (student_id, kit_id, borrow_date, due_date, status, initial_condition)
+         VALUES ($1, $2, NOW(), NOW() + INTERVAL '7 days', 'ACTIVE', $3)
+         RETURNING *`,
+        [studentId, kitId, initialCondition] // studentId -> $1, kitId -> $2, initialCondition -> $3
       );
 
       // 3️⃣ Update kit status
