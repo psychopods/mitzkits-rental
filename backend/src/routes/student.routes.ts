@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import { body } from 'express-validator';
 import { StudentController } from '../controllers/student.controller';
 

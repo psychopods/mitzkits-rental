@@ -6,6 +6,7 @@ const router = Router();
 const kitController = new KitController();
 
 router.get('/', kitController.getAllKits);
+router.get("/count",kitController.countAllKits)
 router.get('/:id', kitController.getKitById);
 router.post(
   '/',

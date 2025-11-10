@@ -2,8 +2,20 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { Kit } from '../entities/Kit';
 import pool from '../config/postgreSQL';
+import { error } from 'console';
 
 export class KitController {
+  async countAllKits(req:Request, res:Response){
+    try {
+      const result =  await pool.query('SELECT COUNT (*) AS total_kits FROM kits');
+      const totalKits = parseInt(result.rows[0].total_kits, 10);
+      res.json({totalKits});
+    } catch (err) {
+      console.error(error);
+      res.status(500).json({error: "Failed to Count Kits"})
+    }
+  }
+
   async getAllKits(req: Request, res: Response) {
     try {
       const result = await pool.query('SELECT * FROM kits');

@@ -53,7 +53,7 @@ export class AdminAuthController {
 
       const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET!, { expiresIn: '1h' });
 
-      res.json({ token });
+      res.json({ token, role:user.role });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Login failed' });
