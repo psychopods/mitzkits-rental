@@ -4,6 +4,7 @@ import { Transaction } from '../models/types';
 import pool from '../config/postgreSQL';
 
 export class BorrowController {
+  
   async getAllTransactions(req: Request, res: Response) {
     try {
       const result = await pool.query('SELECT * FROM borrow_transactions ORDER BY borrow_date DESC');
@@ -81,27 +82,12 @@ export class BorrowController {
         return res.status(400).json({ error: "Kit is not available for borrowing" });
       }
 
-      // 2️⃣ Create transaction — corrected parameter order
-      const insertQuery = `
-        INSERT INTO borrow_transactions (
-          student_id,
-          kit_id,
-          borrow_date,
-          due_date,
-          status,
-          initial_condition
-        )
-        VALUES (
-          $1, $2, NOW(), NOW() + INTERVAL '7 days', 'ACTIVE', $3
-        )
-        RETURNING *;
-      `;
-
-      const transactionResult = await pool.query(insertQuery, [
-        studentId,
-        kitId,
-        initialCondition
-      ]);
+      // Create transaction
+      const transactionResult = await pool.query(
+        `INSERT INTO borrow_transactions (student_id, kit_id, borrow_date, due_date, status, initial_condition)
+         VALUES ($1, NOW(), NOW() + INTERVAL '7 days', 'ACTIVE', $2, $3) RETURNING *`,
+        [studentId, kitId, initialCondition]
+      );
 
       // 3️⃣ Update kit status
       await pool.query("UPDATE kits SET status = $1 WHERE id = $2", [
@@ -129,9 +115,8 @@ export class BorrowController {
     try {
       await pool.query("BEGIN");
 
-      // 1️⃣ Fetch the transaction
-      const txResult = await pool.query("SELECT * FROM borrow_transactions WHERE id = $1", [id]);
-      const transaction = txResult.rows[0];
+      const result = await pool.query('SELECT * FROM borrow_transactions WHERE id = $1', [id]);
+      const transaction = result.rows[0];
 
       if (!transaction) {
         await pool.query("ROLLBACK");
@@ -145,32 +130,15 @@ export class BorrowController {
 
       // 2️⃣ Initialize penalties
       const penalties: string[] = [];
+      if (returnCondition !== transaction.initial_condition) penalties.push('DAMAGED_ITEM');
 
-      // 2a️⃣ Check for damaged kit
-      if (returnCondition !== transaction.initial_condition) {
-        penalties.push("DAMAGED_ITEM");
-      }
-
-      // 2b️⃣ Check for late return
-      const now = new Date();
-      const dueDate = new Date(transaction.due_date);
-      if (now > dueDate) {
-        penalties.push("LATE_RETURN");
-      }
-
-      // 3️⃣ Update transaction
-      const updateQuery = `
-        UPDATE transactions
-        SET return_date = NOW(),
-            status = 'RETURNED',
-            penalties = $1,
-            notes = $2,
-            updated_at = NOW()
-        WHERE id = $3
-        RETURNING *;
-      `;
-
-      const updatedTx = await pool.query(updateQuery, [penalties, notes, id]);
+      // Update transaction
+      const updateTx = await pool.query(
+        `UPDATE borrow_transactions
+         SET return_date = NOW(), status = 'RETURNED', penalties = $1, notes = $2
+         WHERE id = $3 RETURNING *`,
+        [penalties, notes, id]
+      );
 
       // 4️⃣ Update kit status
       await pool.query(
