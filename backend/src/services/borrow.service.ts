@@ -1,12 +1,10 @@
 import { Repository } from 'typeorm';
-import { AppDataSource } from '../index';
 import { BorrowTransaction } from '../entities/BorrowTransaction';
-import { Kit } from '../entities/Kit';
-import { StudentAccount } from '../entities/StudentAccount';
 import { TransactionStatus, KitStatus, AccountFlag } from '../../../shared/src/types';
-import { redis } from '../index';
 import { KitService } from './kit.service';
 import { StudentService } from './student.service';
+import redis from '../config/redisDB';
+import AppDataSource from '../config/data-source';
 
 export class BorrowService {
   private transactionRepository: Repository<BorrowTransaction>;

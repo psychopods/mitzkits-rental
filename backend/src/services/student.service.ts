@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
-import { AppDataSource } from '../index';
+import AppDataSource from '../config/data-source';
 import { StudentAccount } from '../entities/StudentAccount';
 import { AccountStatus, AccountFlag } from '../../../shared/src/types';
-import { redis } from '../index';
+import redis from '../config/redisDB';
 
 export class StudentService {
   private studentRepository: Repository<StudentAccount>;

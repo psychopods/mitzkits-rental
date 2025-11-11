@@ -1,9 +1,9 @@
 import { Repository } from 'typeorm';
-import { AppDataSource } from '../index';
+import AppDataSource from '../config/data-source';
 import { Kit } from '../entities/Kit';
 import { KitComponent } from '../entities/KitComponent';
 import { KitStatus, KitCondition, ComponentStatus } from '../../../shared/src/types';
-import { redis } from '../index';
+import redis from '../config/redisDB';
 
 export class KitService {
   private kitRepository: Repository<Kit>;
@@ -120,24 +120,23 @@ export class KitService {
     if (!kit) return;
 
     const components = kit.components;
-    let worstCondition = KitCondition.EXCELLENT;
+    let worstCondition: KitCondition = KitCondition.EXCELLENT;
 
     for (const component of components) {
       if (component.status === ComponentStatus.DAMAGED) {
         worstCondition = KitCondition.DAMAGED;
         break;
       }
-
-      if (component.condition === KitCondition.POOR && worstCondition !== KitCondition.DAMAGED) {
-        worstCondition = KitCondition.POOR;
-      } else if (component.condition === KitCondition.FAIR && 
-                worstCondition !== KitCondition.DAMAGED && 
-                worstCondition !== KitCondition.POOR) {
-        worstCondition = KitCondition.FAIR;
-      } else if (component.condition === KitCondition.GOOD && 
-                worstCondition === KitCondition.EXCELLENT) {
-        worstCondition = KitCondition.GOOD;
-      }
+      // if (component.condition === KitCondition.POOR && worstCondition !== KitCondition.DAMAGED) {
+      //   worstCondition = KitCondition.POOR;
+      // } else if (component.condition === KitCondition.FAIR && 
+      //           worstCondition !== KitCondition.DAMAGED && 
+      //           worstCondition !== KitCondition.POOR) {
+      //   worstCondition = KitCondition.FAIR;
+      // } else if (component.condition === KitCondition.GOOD && 
+      //           worstCondition === KitCondition.EXCELLENT) {
+      //   worstCondition = KitCondition.GOOD;
+      // }
     }
 
     await this.updateKit(kitId, { condition: worstCondition });
