@@ -8,6 +8,9 @@ const borrowController = new BorrowController();
 // Get all borrow transactions
 router.get('/', borrowController.getAllTransactions);
 
+//Get All borrow counts
+router.get('/borrow_counts', borrowController.getTransactionCounts);
+
 // Get transaction by ID
 router.get('/:id', borrowController.getTransactionById);
 

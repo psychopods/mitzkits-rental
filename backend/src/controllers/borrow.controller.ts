@@ -203,4 +203,41 @@ export class BorrowController {
     }
   }
 
+  async getTransactionCounts(req: Request, res: Response) {
+    try {
+      // Count borrowed kits (ACTIVE transactions)
+      const borrowedResult = await pool.query(
+        'SELECT COUNT(*) FROM borrow_transactions WHERE status = $1',
+        ['ACTIVE']
+      );
+
+      // Count returned kits (RETURNED transactions)
+      const returnedResult = await pool.query(
+        'SELECT COUNT(*) FROM borrow_transactions WHERE status = $1',
+        ['RETURNED']
+      );
+
+      // Count overdue kits
+      const overdueResult = await pool.query(
+        'SELECT COUNT(*) FROM borrow_transactions WHERE status = $1',
+        ['OVERDUE']
+      );
+
+      // Count total transactions
+      const totalResult = await pool.query(
+        'SELECT COUNT(*) FROM borrow_transactions'
+      );
+
+      res.json({
+        borrowed: parseInt(borrowedResult.rows[0].count),
+        returned: parseInt(returnedResult.rows[0].count),
+        overdue: parseInt(overdueResult.rows[0].count),
+        total: parseInt(totalResult.rows[0].count)
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch transaction counts' });
+    }
+  }
+
 }
