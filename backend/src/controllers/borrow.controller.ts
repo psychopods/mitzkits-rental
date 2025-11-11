@@ -134,13 +134,37 @@ export class BorrowController {
       const penalties: string[] = [];
       if (returnCondition !== transaction.initial_condition) penalties.push('DAMAGED_ITEM');
 
-      // Update transaction
-      const updateTx = await pool.query(
-        `UPDATE borrow_transactions
-         SET return_date = NOW(), status = 'RETURNED', penalties = $1, notes = $2
-         WHERE id = $3 RETURNING *`,
-        [penalties, notes, id]
-      );
+      // Update transaction (store penalties and return condition).
+      // If the penalties column doesn't exist yet, fall back gracefully without it.
+      let updateTx;
+      try {
+        updateTx = await pool.query(
+          `UPDATE borrow_transactions
+           SET return_date = NOW(),
+               status = 'RETURNED',
+               penalties = $1,
+               notes = $2,
+               return_condition = $3
+           WHERE id = $4 RETURNING *`,
+          [penalties, notes ?? null, returnCondition ?? null, id]
+        );
+      } catch (e: any) {
+        if (e && e.code === '42703') {
+          // Column does not exist: run fallback update without penalties column
+          console.warn('penalties column missing on borrow_transactions; applying fallback update. Consider running the DB migration to add it.');
+          updateTx = await pool.query(
+            `UPDATE borrow_transactions
+             SET return_date = NOW(),
+                 status = 'RETURNED',
+                 notes = $1,
+                 return_condition = $2
+             WHERE id = $3 RETURNING *`,
+            [notes ?? null, returnCondition ?? null, id]
+          );
+        } else {
+          throw e;
+        }
+      }
 
       // 4️⃣ Update kit status
       await pool.query(
