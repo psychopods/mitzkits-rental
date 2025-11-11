@@ -8,17 +8,17 @@ const borrowController = new BorrowController();
 // Get all borrow transactions
 router.get('/', borrowController.getAllTransactions);
 
-//Get All borrow counts
+// Get All borrow counts - MUST BE BEFORE /:id
 router.get('/borrow_counts', borrowController.getTransactionCounts);
 
-// Get transaction by ID
-router.get('/:id', borrowController.getTransactionById);
-
-// Get transactions by student ID
+// Get transactions by student ID - MUST BE BEFORE /:id
 router.get('/student/:studentId', borrowController.getStudentTransactions);
 
-// Get transactions by kit ID
+// Get transactions by kit ID - MUST BE BEFORE /:id
 router.get('/kit/:kitId', borrowController.getKitTransactions);
+
+// Get transaction by ID - PUT THIS AFTER SPECIFIC ROUTES
+router.get('/:id', borrowController.getTransactionById);
 
 // Create borrow transaction
 router.post(
