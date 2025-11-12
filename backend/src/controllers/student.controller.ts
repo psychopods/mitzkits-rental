@@ -14,6 +14,17 @@ export class StudentController {
       res.status(500).json({error: "Failed to count Students"})
     }
   }
+  async countFlagedStudent(req:Request, res: Response){ //Natakiwa kuifanya iweze kuhesabu watoto waliowekwa alama za usugu 
+    try {
+      const result = await pool.query(
+        'SELECT COUNT (*) AS total_flaged_student FROM student_accounts'
+      )
+      const flagedStudents = parseInt(result.rows[0].total_flaged_student, 10)
+      res.json({flagedStudents})
+    } catch (err) {
+      console.error({error: "Failed to count Flaged Student"})
+    } //kwa sasa ina-hesabu tyu idadi ya flags zilizopo kwa system.
+  }
 
   async getAllStudents(req: Request, res: Response) {
     try {

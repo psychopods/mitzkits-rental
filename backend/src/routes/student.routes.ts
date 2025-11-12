@@ -8,6 +8,7 @@ const studentController = new StudentController();
 
 router.get('/', studentController.getAllStudents);
 router.get("/student_count", studentController.countAllStudents)
+router.get("/get_flaged_students", studentController.countFlagedStudent)
 router.get('/:studentId', studentController.getStudentById);
 router.post('/',
   [
